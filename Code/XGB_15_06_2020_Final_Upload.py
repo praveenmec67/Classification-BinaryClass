@@ -138,7 +138,7 @@ X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,stratify=y,rand
 
 #Hyperparameter Tuning
 
-#l=[i for i in np.arange(0.001,0.005,0.01,0.05,0.5,0.1)]
+#l=[0.001,0.005,0.01,0.05,0.5,0.1]
 #n=[i for i in range(100,300,100)]
 #md=[i for i in np.arange(3,8,1)]
 #rl=[i for i in np.arange(0,1,0.1)]
