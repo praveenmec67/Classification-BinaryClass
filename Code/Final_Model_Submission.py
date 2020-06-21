@@ -131,7 +131,7 @@ plt.show()
 
 def feature_preprocess_transformation(data):
     global train,test
-    data['X_12']=data['X_12'].fillna(value=1.0).astype(int)                                                    #Since from the above EDA, we can see more than 75 percentile of X_12 is 1
+    data['X_12']=data['X_12'].fillna(value=1.0).astype(int)                                                    
 
 
 # Calling the preprocessing function for Train and Test Data
