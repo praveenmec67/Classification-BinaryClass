@@ -56,7 +56,9 @@ print('Count of Null Data in Test : '+'\n'+'\n'+str(test.isna().sum())+'\n')    
 print('Balance of Dependant Variables : '+'\n'+'\n'+str(train['MULTIPLE_OFFENSE'].value_counts())+'\n')         #0-1068 1-22788
 print('No of duplicates in Train Data : '+str(len(train.loc[train['INCIDENT_ID'].duplicated()]==True))+'\n')
 print('No of duplicates in Train Data : '+str(len(test.loc[test['INCIDENT_ID'].duplicated()]==True))+'\n')
-print(train.describe())
+print('IQR for feature X_12 : '+str(train.describe()))                                                         #0.9740
+print('IQR for feature X_12 : '+str(test.describe()))                                                          #0.9722
+
 
 # EDA
 
@@ -87,7 +89,16 @@ for i in train_eda.columns:
     plt.title('Distribution of Anonymized Logging parameter ' + i)
     plt.show()
 
-# Plot 3: To identify the distribution of values in X_12 feature to impute for NaN values in test data:
+
+# Plot 3: To identify the correlation between the various dependant variables
+# This plots helps to identify the features with multicollinearity. This helps in identifying and dropping those
+# features which are highly correlated.
+
+sns.heatmap(train.corr(), annot=True)
+plt.show()
+
+
+# Plot 4: To identify the distribution of values in X_12 feature to impute for NaN values in test data:
 # From the plot, it can be seen that the distribution in test data is similar to the train data and most
 # value is 1
 
@@ -97,13 +108,6 @@ plt.ylabel('Value_counts')
 plt.title('Distribution of values in X_12_Test')
 plt.show()
 
-
-# Plot 4: To identify the correlation between the various dependant variables
-# This plots helps to identify the features with multicollinearity. This helps in identifying and dropping those
-# features which are highly correlated.
-
-sns.heatmap(train.corr(), annot=True)
-plt.show()
 
 # From the above plot it can be seen that the following pairs are highly correlated with each other and hence
 # both features can be dropped in case of low variance test score(which will be done later below) or either
@@ -117,9 +121,12 @@ plt.show()
 # Feature Preprocessing and Feature Transformation:
 
 # This section handles preprocessing of the input dataset like filling the missing values.
-# In the given dataset it is found that only feature X_12 has missing values in both train and test dataset.
+# From the given datasets it is found that only feature X_12 has missing values in both train and test dataset.
 # Filling the na values with 1 as Plot_1 suggested that X_12 has maximum number of values as 1 and also a
-# mean of 0.92
+# mean of values in X_12 in train and test data is 0.9740 and 0.9722 respectively
+# We are considering mean to fill Nan values, because from plot1 and plot 4 we can see that the distribution
+# of data in feature X_12 is right skewed. Considering the central tendency measure mean for 
+# such distributions is a better approach.
 
 
 def feature_preprocess_transformation(data):
@@ -156,6 +163,24 @@ for i in range(len(x.scores_)):
     print('Feature %d: %f' % (i, x.scores_[i]))
     imp_feature.append(i)
 
+#Result of the ANNOVA test:
+
+#X_1: 4.698824
+#X_2 17.782549
+#X_3: 17.684310
+#X_4: 0.203579
+#X_5 0.283907
+#X_6 1.489952
+#X_7: 1.540444
+#X_8: 26.635719
+#X_9: 0.013363
+#X_10: 1491.658800
+#X_11: 266.372662
+#X_12: 308.553593
+#X_13: 1.011512
+#X_14: 5.560878
+#X_15: 48.221174
+
 
 # Selecting only features having annova score of atleast more than 20
 
@@ -168,7 +193,7 @@ print([i for i in range(len(x.scores_)) if x.scores_[i]>20])
 #'X_2','X_12'  --- dropped due to interaction effect between these variables and X_3,X_10 respectively
 
 
-X=train.drop(['INCIDENT_ID','DATE','X_1','X_2','X_4','X_5','X_6','X_7','X_9','X_12','X_13','X_14','MULTIPLE_OFFENSE'],axis=1).values           #Dropping features having Annova score less than 1. X_3 dropped even score is 17 as its score is same as X_2
+X=train.drop(['INCIDENT_ID','DATE','X_1','X_2','X_4','X_5','X_6','X_7','X_9','X_12','X_13','X_14','MULTIPLE_OFFENSE'],axis=1).values           
 y=train['MULTIPLE_OFFENSE'].values
 
 
@@ -186,9 +211,7 @@ print(X_train_sm.shape)
 print(y_train_sm.shape)
 print(y_train_sm.value_counts())
 
-# From above, it can be seen that the minority class '0' has been upsampled equivalent to the count of class '1'.
-            #0-
-            #1-
+# From above, it can be seen that the minority class '0' has been upsampled
 
 
 # Splitting the training dataset(after SMOTE) into train-test dataset to train the model and validate the model against
