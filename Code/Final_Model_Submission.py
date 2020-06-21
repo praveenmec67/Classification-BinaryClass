@@ -12,8 +12,6 @@ from xgboost import XGBClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import recall_score
 
-
-
 # Initialising
 
 # This section handles the generic initialisation of maximum rows and columns to be displayed when executed
